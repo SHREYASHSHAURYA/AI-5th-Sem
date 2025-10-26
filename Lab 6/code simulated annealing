@@ -1,1 +1,77 @@
+import random
+import math
+
+def print_board(board):
+    n = len(board)
+    for i in range(n):
+        row = ['.'] * n
+        row[board[i]] = 'Q'
+        print(' '.join(row))
+    print()
+
+def random_board(n):
+    # board[i] = column index of queen in row i
+    return [random.randint(0, n - 1) for _ in range(n)]
+
+def heuristic(board):
+    # number of pairs of queens attacking each other
+    attacks = 0
+    n = len(board)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if board[i] == board[j] or abs(board[i] - board[j]) == abs(i - j):
+                attacks += 1
+    return attacks
+
+def get_random_neighbor(board):
+    n = len(board)
+    neighbor = board.copy()
+    row = random.randint(0, n - 1)
+    new_col = random.randint(0, n - 1)
+    while new_col == neighbor[row]:
+        new_col = random.randint(0, n - 1)
+    neighbor[row] = new_col
+    return neighbor
+
+def simulated_annealing_demo(n=4, max_steps=5, initial_temp=100, cooling_rate=0.9):
+    current = random_board(n)
+    current_h = heuristic(current)
+    T = initial_temp
+
+    print("Initial Board:")
+    print_board(current)
+    print(f"Heuristic: {current_h}, Temperature: {T:.2f}\n")
+
+    for step in range(max_steps):
+        neighbor = get_random_neighbor(current)
+        neighbor_h = heuristic(neighbor)
+        delta = neighbor_h - current_h
+
+        # Decide whether to accept the new state
+        if delta < 0:
+            accept = True  # better move
+        else:
+            prob = math.exp(-delta / T)
+            accept = random.random() < prob
+
+        if accept:
+            current, current_h = neighbor, neighbor_h
+
+        T *= cooling_rate  # cool down
+
+        print(f"Step {step+1}:")
+        print_board(current)
+        print(f"Heuristic: {current_h}, Temperature: {T:.2f}")
+        print(f"{'Accepted' if accept else 'Rejected'} (Δ={delta})\n")
+
+        if current_h == 0:
+            print("Solution found early!")
+            break
+
+    print("Final Board after limited simulated annealing steps:")
+    print_board(current)
+    print(f"Final Heuristic: {current_h}")
+
+# Run demonstration
+simulated_annealing_demo(4, max_steps=5, initial_temp=100, cooling_rate=0.85)
 
