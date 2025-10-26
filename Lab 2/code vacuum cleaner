@@ -1,0 +1,56 @@
+import random
+
+def vacuum_cleaner_agent(location, status_A, status_B):
+    """
+    Simulates a simple vacuum cleaner agent in a two-location environment (A and B).
+
+    Args:
+        location (str): The current location of the vacuum ('A' or 'B').
+        status_A (str): The cleanliness status of location A ('Dirty' or 'Clean').
+        status_B (str): The cleanliness status of location B ('Dirty' or 'Clean').
+
+    Returns:
+        tuple: A tuple containing the updated location and statuses after the agent's action.
+    """
+    print(f"Vacuum cleaner is at {location}.")
+
+    if location == 'A':
+        if status_A == 'Dirty':
+            print("Location A is Dirty. Sucking dirt...")
+            status_A = 'Clean'
+            print("Location A is now Clean.")
+            # Move to B after cleaning A
+            print("Moving to Location B.")
+            return 'B', status_A, status_B
+        else:
+            print("Location A is Clean. Moving to Location B.")
+            return 'B', status_A, status_B
+    elif location == 'B':
+        if status_B == 'Dirty':
+            print("Location B is Dirty. Sucking dirt...")
+            status_B = 'Clean'
+            print("Location B is now Clean.")
+            # Move to A after cleaning B
+            print("Moving to Location A.")
+            return 'A', status_A, status_B
+        else:
+            print("Location B is Clean. Moving to Location A.")
+            return 'A', status_A, status_B
+
+# Initializing the environment
+initial_location = random.choice(['A', 'B'])
+initial_status_A = random.choice(['Dirty', 'Clean'])
+initial_status_B = random.choice(['Dirty', 'Clean'])
+
+print(f"Initial state: Vacuum at {initial_location}, A is {initial_status_A}, B is {initial_status_B}\n")
+
+current_location, current_status_A, current_status_B = initial_location, initial_status_A, initial_status_B
+
+# Running the simulation until both locations are clean
+while current_status_A == 'Dirty' or current_status_B == 'Dirty':
+    current_location, current_status_A, current_status_B = vacuum_cleaner_agent(
+        current_location, current_status_A, current_status_B
+    )
+    print(f"Current state: Vacuum at {current_location}, A is {current_status_A}, B is {current_status_B}\n")
+
+print("Both locations are clean. Vacuum cleaner has finished its task.")
