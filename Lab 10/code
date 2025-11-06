@@ -1,0 +1,47 @@
+# --- Forward Reasoning in First Order Logic ---
+
+# Initial facts
+facts = {
+    "Man(Marcus)",
+    "Pompeian(Marcus)"
+}
+
+# Rules represented as (premise, conclusion) pairs
+rules = [
+    ("Pompeian(x)", "Roman(x)"),
+    ("Roman(x)", "Loyal(x)"),
+    ("Man(x)", "Person(x)"),
+    ("Person(x)", "Mortal(x)")
+]
+
+# Function to apply forward chaining
+def forward_chain(facts, rules):
+    inferred = set(facts)  # start with known facts
+    changed = True
+
+    while changed:
+        changed = False
+        for premise, conclusion in rules:
+            # Replace variable x with constants found in facts
+            for fact in list(inferred):
+                if fact.startswith(premise.split('(')[0]):
+                    # Extract the constant, e.g., Marcus from Man(Marcus)
+                    constant = fact[fact.find("(")+1 : fact.find(")")]
+                    new_fact = conclusion.replace("x", constant)
+                    if new_fact not in inferred:
+                        inferred.add(new_fact)
+                        changed = True
+                        print(f"Inferred: {new_fact}")
+    return inferred
+
+# Run the inference
+derived_facts = forward_chain(facts, rules)
+
+# Query
+query = "Mortal(Marcus)"
+
+# Check if query is derived
+if query in derived_facts:
+    print(f"\n Query proved: {query}")
+else:
+    print(f"\n Query cannot be proved: {query}")
